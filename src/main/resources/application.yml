@@ -1,0 +1,21 @@
+server:
+  port: 8180
+spring:
+  application:
+    name: student-management-system
+  datasource:
+    url: jdbc:oracle:thin:@192.168.1.110:1521/ORCLPDB
+    username: studentms
+    password: studentms
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+
+reportsBasePath: D:/Projects/SpringBoot/Boubyan/student-management-system/pdf-templates
+  
+report:
+  template:
+    courseScheduleReport:
+      path: ${reportsBasePath}/pdf-templates/courseScheduleReport.jrxml
