@@ -1,8 +1,11 @@
 server:
   port: 8180
+  servlet:
+    context-path: /studentms
 spring:
   application:
     name: student-management-system
+  
   datasource:
     url: jdbc:oracle:thin:@192.168.1.110:1521/ORCLPDB
     username: studentms
@@ -12,6 +15,9 @@ spring:
     show-sql: true
     properties:
       hibernate.format_sql: true
+  jsp:
+    prefix: /WEB-INF/jsp/
+    suffix: .jsp
 
 reportsBasePath: D:/Projects/SpringBoot/Boubyan/student-management-system/pdf-templates
   
