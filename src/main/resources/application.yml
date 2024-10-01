@@ -19,9 +19,9 @@ spring:
     prefix: /WEB-INF/jsp/
     suffix: .jsp
 
-reportsBasePath: D:/Projects/SpringBoot/Boubyan/student-management-system/pdf-templates
+reportsBasePath: D:/Projects/SpringBoot/Boubyan/student-management-system/pdf-templates/
   
 report:
   template:
     courseScheduleReport:
-      path: ${reportsBasePath}/pdf-templates/courseScheduleReport.jrxml
+      path: ${reportsBasePath}courseScheduleReport.jrxml

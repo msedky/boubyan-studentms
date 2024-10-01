@@ -28,7 +28,7 @@ public class ScheduleEntity implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "course_id", nullable = false)
+	@JoinColumn(name = "COURSE_ID", nullable = false)
 	private CourseEntity course;
 
 	@Column(name = "START_DATE", nullable = false)

@@ -7,9 +7,13 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.boubyan.studentms.model.dtos.response.CourseScheduleReportDto;
+import org.boubyan.studentms.repositories.ScheduleStudentRepository;
 import org.boubyan.studentms.services.ScheduleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +27,7 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 @Transactional
@@ -35,20 +40,30 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Value("${reportsBasePath}")
 	private String reportsBasePath;
 
+	@Autowired
+	private ScheduleStudentRepository scheduleStudentRepository;
+
 	@Override
 	public void printCourseSchedule(Integer courseId, HttpServletResponse response) {
 		File exportedFile = null;
 		try {
+
 			JasperReport jasperReport = JasperCompileManager.compileReport(courseScheduleReportPath);
 			Map<String, Object> params = new HashMap<>();
-			params.put("PARAM_NAME", null);
+			params.put("IMG_PATH", reportsBasePath);
+			
+			List<CourseScheduleReportDto> courseScheduleReportDtoList = scheduleStudentRepository
+					.getCourseScheduleReport(courseId);
+			JRBeanCollectionDataSource courseScheduleReportDs = new JRBeanCollectionDataSource(courseScheduleReportDtoList);
+			params.put("courseScheduleReportList", courseScheduleReportDs);
+			
 
 			JasperPrint print = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
 			long longDateTime = new Date().getTime();
 			String EXPORTED_FILE_PATH = reportsBasePath + longDateTime + ".pdf";
 			exportedFile = new File(EXPORTED_FILE_PATH);
 			JasperExportManager.exportReportToPdfFile(print, EXPORTED_FILE_PATH);
-
+			org.apache.batik.bridge.UserAgent k;
 			String mimeType = URLConnection.guessContentTypeFromName(exportedFile.getName());
 			if (mimeType == null) {
 				// unknown mimetype so set the mimetype to application/octet-stream

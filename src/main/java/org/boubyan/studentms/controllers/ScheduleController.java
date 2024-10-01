@@ -18,7 +18,7 @@ public class ScheduleController {
 	private ScheduleService scheduleService;
 
 	@SuppressWarnings("rawtypes")
-	@GetMapping("/printScheduleCourse")
+	@GetMapping("/printScheduleCourse/{courseId}")
 	public ResponseEntity printCourseSchedule(@PathVariable Integer courseId, HttpServletResponse response) {
 		scheduleService.printCourseSchedule(courseId, response);
 		return ResponseEntity.ok().build();
