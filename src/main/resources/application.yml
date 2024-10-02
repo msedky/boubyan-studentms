@@ -18,6 +18,9 @@ spring:
   jsp:
     prefix: /WEB-INF/jsp/
     suffix: .jsp
+    
+  cache:
+    type: hazelcast
 
 reportsBasePath: D:/Projects/SpringBoot/Boubyan/student-management-system/pdf-templates/
   
@@ -25,3 +28,5 @@ report:
   template:
     courseScheduleReport:
       path: ${reportsBasePath}courseScheduleReport.jrxml
+
+cacheTimeToLiveSeconds: 60

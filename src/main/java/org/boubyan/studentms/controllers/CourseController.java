@@ -7,6 +7,7 @@ import org.boubyan.studentms.model.dtos.request.CreateCourseRequestDto;
 import org.boubyan.studentms.model.dtos.request.ViewCoursesRequestDto;
 import org.boubyan.studentms.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ public class CourseController {
 	}
 
 	@PostMapping("/viewCourses")
+	@Cacheable(value = "courses", key = "#viewCoursesDto")
 	public List<CourseDto> viewCourses(@RequestBody ViewCoursesRequestDto viewCoursesDto) {
 		return courseService.viewCourses(viewCoursesDto);
 	}
