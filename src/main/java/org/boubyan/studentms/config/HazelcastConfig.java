@@ -11,9 +11,8 @@ import com.hazelcast.core.HazelcastInstance;
 
 @Configuration
 public class HazelcastConfig {
-	
-	@Value("${cacheTimeToLiveSeconds}")
-	private Integer cacheTimeToLiveSeconds;
+
+	private Integer cacheTimeToLiveSeconds = 60;
 
 	@Bean
 	public HazelcastInstance hazelcastInstance() {

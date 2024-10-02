@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /studentms
 spring:
+  profiles:
+    active: dev
   application:
     name: student-management-system
   
@@ -28,5 +30,3 @@ report:
   template:
     courseScheduleReport:
       path: ${reportsBasePath}courseScheduleReport.jrxml
-
-cacheTimeToLiveSeconds: 60

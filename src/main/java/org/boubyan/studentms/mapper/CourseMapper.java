@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.boubyan.studentms.model.dtos.CourseDto;
 import org.boubyan.studentms.model.dtos.request.CreateCourseRequestDto;
+import org.boubyan.studentms.model.dtos.request.UpdateCourseRequestDto;
 import org.boubyan.studentms.model.entities.CourseEntity;
 import org.mapstruct.Mapper;
 
@@ -17,5 +18,7 @@ public interface CourseMapper {
 	CourseEntity fromCreateRequestDtoToEntity(CreateCourseRequestDto createCourseRequestDto);
 
 	CourseEntity fromDtoToEntity(CourseDto dto);
+
+	CourseEntity fromUpdateRequestDtoToEntity(UpdateCourseRequestDto updateCourseRequestDto);
 
 }

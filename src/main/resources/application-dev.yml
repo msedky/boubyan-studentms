@@ -1,0 +1,6 @@
+reportsBasePath: D:/Projects/SpringBoot/Boubyan/student-management-system/pdf-templates/
+  
+report:
+  template:
+    courseScheduleReport:
+      path: ${reportsBasePath}courseScheduleReport.jrxml
