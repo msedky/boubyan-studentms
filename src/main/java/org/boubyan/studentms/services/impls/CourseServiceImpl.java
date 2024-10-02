@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.boubyan.studentms.exceptions.BusinessException;
 import org.boubyan.studentms.mapper.CourseMapper;
 import org.boubyan.studentms.model.dtos.CourseDto;
 import org.boubyan.studentms.model.dtos.request.CreateCourseRequestDto;
@@ -17,8 +18,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.hazelcast.spring.cache.HazelcastCache;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -44,6 +43,9 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public CourseDto create(CreateCourseRequestDto createCourseRequestDto) {
+		courseRepository.findByCode(createCourseRequestDto.getCode()).ifPresent(d -> {
+			throw new BusinessException("Duplicated Course Code");
+		});
 		CourseEntity courseEntity = courseMapper.fromCreateRequestDtoToEntity(createCourseRequestDto);
 		courseEntity = courseRepository.save(courseEntity);
 		CourseDto courseDto = courseMapper.fromEntityToDto(courseEntity);
@@ -53,9 +55,15 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public CourseDto update(UpdateCourseRequestDto updateCourseRequestDto) {
-		CourseEntity courseEntity = courseRepository.findById(updateCourseRequestDto.getId()).orElseThrow(
-				() -> new RuntimeException("Course id [" + updateCourseRequestDto.getId() + "] is Not Found"));
-		courseEntity = courseMapper.fromUpdateRequestDtoToEntity(updateCourseRequestDto);
+		courseRepository.findByCode(updateCourseRequestDto.getCode()).ifPresent(d -> {
+			if (!d.getId().equals(updateCourseRequestDto.getId())) {
+				throw new BusinessException(
+						"Another Course already has the Code [" + updateCourseRequestDto.getCode() + "]");
+			}
+		});
+		courseRepository.findById(updateCourseRequestDto.getId()).orElseThrow(
+				() -> new BusinessException("Course id [" + updateCourseRequestDto.getId() + "] is Not Found"));
+		CourseEntity courseEntity = courseMapper.fromUpdateRequestDtoToEntity(updateCourseRequestDto);
 		courseEntity = courseRepository.save(courseEntity);
 		CourseDto courseDto = courseMapper.fromEntityToDto(courseEntity);
 		addToCacheViewCoursesDto(courseDto);
@@ -65,7 +73,7 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public void delete(Integer id) {
 		CourseEntity courseEntity = courseRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Course id [" + id + "] is Not Found"));
+				.orElseThrow(() -> new BusinessException("Course id [" + id + "] is Not Found"));
 		courseRepository.delete(courseEntity);
 		removeFromCacheViewCoursesDto(courseMapper.fromEntityToDto(courseEntity));
 	}
@@ -73,7 +81,7 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public CourseDto getById(Integer id) {
 		CourseEntity courseEntity = courseRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Course id [" + id + "] is Not Found"));
+				.orElseThrow(() -> new BusinessException("Course id [" + id + "] is Not Found"));
 		CourseDto courseDto = courseMapper.fromEntityToDto(courseEntity);
 		return courseDto;
 	}

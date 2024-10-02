@@ -20,4 +20,5 @@ public interface ScheduleStudentRepository extends JpaRepository<ScheduleStudent
 			+ "FROM ScheduleStudentEntity ss JOIN ss.schedule s JOIN s.course c WHERE s.course.id = ?1 "
 			+ "GROUP BY c.code, c.name, s.startDate, s.endDate ORDER BY s.startDate DESC")
 	List<CourseScheduleReportDto> getCourseScheduleReport(Integer courseId);
+
 }

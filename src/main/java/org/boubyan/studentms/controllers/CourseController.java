@@ -2,6 +2,8 @@ package org.boubyan.studentms.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.boubyan.studentms.model.dtos.CourseDto;
 import org.boubyan.studentms.model.dtos.request.CreateCourseRequestDto;
 import org.boubyan.studentms.model.dtos.request.UpdateCourseRequestDto;
@@ -28,13 +30,13 @@ public class CourseController {
 	private CourseService courseService;
 
 	@PostMapping
-	public CourseDto create(@RequestBody CreateCourseRequestDto createCourseRequestDto) {
+	public CourseDto create(@RequestBody @Valid CreateCourseRequestDto createCourseRequestDto) {
 		return courseService.create(createCourseRequestDto);
 	}
 
 	@PutMapping("/{id}")
 	@CachePut(value = "courses", key = "#id")
-	public CourseDto update(@PathVariable Integer id, @RequestBody UpdateCourseRequestDto updateCourseRequestDto) {
+	public CourseDto update(@PathVariable Integer id, @RequestBody @Valid UpdateCourseRequestDto updateCourseRequestDto) {
 		updateCourseRequestDto.setId(id);
 		return courseService.update(updateCourseRequestDto);
 	}

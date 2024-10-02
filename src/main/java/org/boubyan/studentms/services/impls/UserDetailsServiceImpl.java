@@ -1,5 +1,6 @@
 package org.boubyan.studentms.services.impls;
 
+import org.boubyan.studentms.exceptions.BusinessException;
 import org.boubyan.studentms.model.entities.UserEntity;
 import org.boubyan.studentms.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserEntity userEntity = userRepository.findByUsername(username)
-				.orElseThrow(() -> new RuntimeException("User not found"));
+				.orElseThrow(() -> new BusinessException("User not found"));
 		return org.springframework.security.core.userdetails.User.withUsername(userEntity.getUsername())
 				.password(userEntity.getPassword()).authorities("USER") // Add roles if you have them
 				.accountExpired(false).accountLocked(false).credentialsExpired(false).disabled(false).build();

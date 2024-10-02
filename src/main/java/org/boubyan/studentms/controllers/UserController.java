@@ -1,5 +1,7 @@
 package org.boubyan.studentms.controllers;
 
+import javax.validation.Valid;
+
 import org.boubyan.studentms.model.dtos.request.LoginRequestDto;
 import org.boubyan.studentms.model.dtos.request.RegisterUserRequestDto;
 import org.boubyan.studentms.model.dtos.response.LoginResponseDto;
@@ -19,7 +21,7 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/login")
-	public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
+	public LoginResponseDto login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
 
 		return LoginResponseDto.builder()
 				.token(userService.authenticate(loginRequestDto.getUsername(), loginRequestDto.getPassword())).build();
@@ -27,7 +29,7 @@ public class UserController {
 	}
 
 	@PostMapping("/register")
-	public RegisterUserResponseDto register(@RequestBody RegisterUserRequestDto registerUserRequestDto) {
+	public RegisterUserResponseDto register(@RequestBody @Valid RegisterUserRequestDto registerUserRequestDto) {
 		return userService.register(registerUserRequestDto);
 	}
 }
