@@ -11,7 +11,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import javax.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@Slf4j
 public class JwtTokenProvider {
 
 	private String TOKEN_SECRECT = "uim8asd63212safg01421.5436xdaa";
@@ -73,9 +71,7 @@ public class JwtTokenProvider {
 		return claims.get("lastActivity", Long.class);
 	}
 
-	/*
 	public String createTokenWithUpdatedActivity(Authentication authentication, long lastActivity) {
-		log.info("createTokenWithUpdatedActivity");
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
 		claims.put("roles", userDetails.getAuthorities());
@@ -87,5 +83,5 @@ public class JwtTokenProvider {
 		return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity)
 				.signWith(SignatureAlgorithm.HS256, TOKEN_SECRECT).compact();
 	}
-	*/
+
 }

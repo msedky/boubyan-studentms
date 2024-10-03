@@ -4,19 +4,25 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-	private final JwtTokenProvider jwtTokenProvider;
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
 
-	public JwtRequestFilter(JwtTokenProvider jwtTokenProvider) {
-		this.jwtTokenProvider = jwtTokenProvider;
-	}
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -24,7 +30,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		String token = jwtTokenProvider.resolveToken(request);
 		if (token != null && jwtTokenProvider.validateToken(token)) {
 			String username = jwtTokenProvider.getUsername(token);
-			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
+
+			// Load UserDetails from UserDetailsService
+			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
 					jwtTokenProvider.getAuthorities(token));
 
 			long lastActivity = jwtTokenProvider.getLastActivity(token);
@@ -37,9 +47,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			}
 
 			// Update last activity timestamp
-			// String newToken = jwtTokenProvider.createTokenWithUpdatedActivity(auth,
-			// currentTime);
-			// response.setHeader("Authorization", "Bearer " + newToken); // Optionally send
+			String newToken = jwtTokenProvider.createTokenWithUpdatedActivity(auth, currentTime);
+			response.setHeader("Authorization", "Bearer " + newToken);
+			// Optionally send
 			// new token back
 
 			SecurityContextHolder.getContext().setAuthentication(auth);

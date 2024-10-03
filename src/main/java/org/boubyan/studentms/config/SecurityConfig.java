@@ -1,7 +1,6 @@
 package org.boubyan.studentms.config;
 
 import org.boubyan.studentms.config.security.JwtRequestFilter;
-import org.boubyan.studentms.config.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +20,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
 	@Autowired
-	private JwtTokenProvider jwtTokenProvider;
+	private UserDetailsService userDetailsService; // Use your UserDetailsService implementation
 
 	@Autowired
-	private UserDetailsService userDetailsService; // Use your UserDetailsService implementation
+	private JwtRequestFilter jwtRequestFilter;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -45,13 +44,9 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authorize -> authorize.antMatchers("/users/login", "/users/register").permitAll()
 						.anyRequest().authenticated())
-				.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
 
-	@Bean
-	public JwtRequestFilter jwtRequestFilter() {
-		return new JwtRequestFilter(jwtTokenProvider);
-	}
 }
