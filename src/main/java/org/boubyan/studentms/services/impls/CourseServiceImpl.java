@@ -12,6 +12,7 @@ import org.boubyan.studentms.model.dtos.request.UpdateCourseRequestDto;
 import org.boubyan.studentms.model.dtos.request.ViewCoursesRequestDto;
 import org.boubyan.studentms.model.entities.CourseEntity;
 import org.boubyan.studentms.repositories.CourseRepository;
+import org.boubyan.studentms.repositories.ScheduleRepository;
 import org.boubyan.studentms.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -31,6 +32,9 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseRepository courseRepository;
+
+	@Autowired
+	private ScheduleRepository scheduleRepository;
 
 	@Autowired
 	private CourseMapper courseMapper;
@@ -74,6 +78,10 @@ public class CourseServiceImpl implements CourseService {
 	public void delete(Integer id) {
 		CourseEntity courseEntity = courseRepository.findById(id)
 				.orElseThrow(() -> new BusinessException("Course id [" + id + "] is Not Found"));
+		scheduleRepository.findByCourse(courseEntity).ifPresent((s) -> {
+			throw new BusinessException("Course id[" + id + "] is already ocurred inside a Schedule");
+		});
+		;
 		courseRepository.delete(courseEntity);
 		removeFromCacheViewCoursesDto(courseMapper.fromEntityToDto(courseEntity));
 	}
